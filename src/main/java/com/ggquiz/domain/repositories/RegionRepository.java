@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface RegionRepository {
     List<Region> findAllActive();
     Optional<Region> findById(Integer id);
+    Region save(Region region);
+    List<Region> findAll();
 }

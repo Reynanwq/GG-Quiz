@@ -2,8 +2,11 @@ package com.ggquiz.application.config;
 
 import com.ggquiz.application.usecases.*;
 import com.ggquiz.domain.repositories.*;
+import com.ggquiz.infrastructure.persistence.repositories.PasswordResetTokenJpaRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.javamail.JavaMailSender;
 
 @Configuration
 public class UseCaseConfig {
@@ -85,5 +88,25 @@ public class UseCaseConfig {
     @Bean
     public FindMyRankingPositionUseCase findMyRankingPositionUseCase(RankingSnapshotRepository rankingSnapshotRepository) {
         return new FindMyRankingPositionUseCase(rankingSnapshotRepository);
+    }
+
+    @Bean
+    public CreateRegionUseCase createRegionUseCase(RegionRepository regionRepository) {
+        return new CreateRegionUseCase(regionRepository);
+    }
+
+    @Bean
+    public ToggleRegionUseCase toggleRegionUseCase(RegionRepository regionRepository) {
+        return new ToggleRegionUseCase(regionRepository);
+    }
+
+    @Bean
+    public ResetPasswordUseCase resetPasswordUseCase(
+            UserRepository userRepository,
+            PasswordEncoderPort passwordEncoder,
+            PasswordResetTokenJpaRepository tokenRepository,
+            JavaMailSender mailSender,
+            @Value("${app.frontend-url}") String frontendUrl) {
+        return new ResetPasswordUseCase(userRepository, passwordEncoder, tokenRepository, mailSender, frontendUrl);
     }
 }

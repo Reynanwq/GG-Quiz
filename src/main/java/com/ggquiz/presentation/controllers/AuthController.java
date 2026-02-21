@@ -2,10 +2,13 @@ package com.ggquiz.presentation.controllers;
 
 import com.ggquiz.application.usecases.AuthenticateUserUseCase;
 import com.ggquiz.application.usecases.RegisterUserUseCase;
+import com.ggquiz.application.usecases.ResetPasswordUseCase;
 import com.ggquiz.domain.entities.User;
 import com.ggquiz.infrastructure.security.JwtService;
+import com.ggquiz.presentation.dto.request.ForgotPasswordRequest;
 import com.ggquiz.presentation.dto.request.LoginRequest;
 import com.ggquiz.presentation.dto.request.RegisterRequest;
+import com.ggquiz.presentation.dto.request.ResetPasswordRequest;
 import com.ggquiz.presentation.dto.response.AuthResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ public class AuthController {
     private final AuthenticateUserUseCase authenticateUserUseCase;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final ResetPasswordUseCase resetPasswordUseCase;
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
@@ -41,5 +45,17 @@ public class AuthController {
         UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
         String token = jwtService.generateToken(userDetails);
         return new AuthResponse(token, user.getUsername(), user.getRole().name());
+    }
+
+    @PostMapping("/forgot-password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        resetPasswordUseCase.sendResetLink(request.email());
+    }
+
+    @PostMapping("/reset-password")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        resetPasswordUseCase.resetPassword(request.token(), request.newPassword());
     }
 }

@@ -2,6 +2,7 @@ package com.ggquiz.infrastructure.persistence.repositories;
 
 import com.ggquiz.domain.entities.Region;
 import com.ggquiz.domain.repositories.RegionRepository;
+import com.ggquiz.infrastructure.persistence.entities.RegionJpaEntity;
 import com.ggquiz.infrastructure.persistence.mappers.RegionEntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -24,5 +25,16 @@ public class RegionRepositoryImpl implements RegionRepository {
     @Override
     public Optional<Region> findById(Integer id) {
         return jpaRepository.findById(id).map(mapper::toDomain);
+    }
+
+    @Override
+    public Region save(Region region) {
+        RegionJpaEntity entity = mapper.toEntity(region);
+        return mapper.toDomain(jpaRepository.save(entity));
+    }
+
+    @Override
+    public List<Region> findAll() {
+        return jpaRepository.findAll().stream().map(mapper::toDomain).toList();
     }
 }
