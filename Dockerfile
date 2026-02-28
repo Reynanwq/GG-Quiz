@@ -1,11 +1,17 @@
-FROM eclipse-temurin:21-jdk-alpine
+FROM eclipse-temurin:21-jdk-alpine AS build
 
 WORKDIR /app
 
 COPY . .
 
-RUN chmod +x mvnw && ./mvnw clean package -DskipTests && ls -la target/
+RUN chmod +x mvnw && ./mvnw clean package -DskipTests
+
+FROM eclipse-temurin:21-jdk-alpine
+
+WORKDIR /app
+
+COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
 
-CMD ["sh", "-c", "java -jar target/*.jar"]
+CMD ["java", "-jar", "app.jar"]
