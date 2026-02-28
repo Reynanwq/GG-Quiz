@@ -10,7 +10,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StartGameSessionUseCase {
 
-    private static final int QUESTIONS_PER_SESSION = 10;
+    private static final int QUESTIONS_PER_SESSION = 100;
 
     private final QuestionRepository questionRepository;
 
