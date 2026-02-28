@@ -1,10 +1,5 @@
 [build]
-builder = "NIXPACKS"
 command = "mvn clean package -DskipTests"
 
 [deploy]
 startCommand = "java -jar target/*.jar"
-healthcheckPath = "/actuator/health"
-healthcheckTimeout = 60
-restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 10
