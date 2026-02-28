@@ -1,5 +1,2 @@
-[build]
-command = "mvn clean package -DskipTests"
-
 [deploy]
-startCommand = "java -jar target/*.jar"
+startCommand = "java -jar app.jar"
