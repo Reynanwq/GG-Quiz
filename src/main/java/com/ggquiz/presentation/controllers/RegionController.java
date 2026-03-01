@@ -32,4 +32,9 @@ public class RegionController {
     public List<Region> listAll() {
         return regionRepository.findAll();
     }
+
+    @PostMapping
+    public Region create(@RequestBody CreateRegionUseCase.CreateRegionCommand command) {
+        return createRegionUseCase.execute(command);
+    }
 }
