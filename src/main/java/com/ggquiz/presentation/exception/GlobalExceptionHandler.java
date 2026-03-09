@@ -2,6 +2,7 @@ package com.ggquiz.presentation.exception;
 
 import com.ggquiz.application.exceptions.BusinessRuleException;
 import com.ggquiz.application.exceptions.NotFoundException;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -55,5 +56,12 @@ public class GlobalExceptionHandler {
         public ErrorResponse(int status, String message) {
             this(status, message, LocalDateTime.now());
         }
+    }
+
+    @ExceptionHandler(RequestNotPermitted.class)
+    public ResponseEntity<ErrorResponse> handleRateLimit(RequestNotPermitted ex) {
+        return ResponseEntity
+                .status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(new ErrorResponse(HttpStatus.TOO_MANY_REQUESTS.value(), "Too many requests. Try again in a few seconds."));
     }
 }

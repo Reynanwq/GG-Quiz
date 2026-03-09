@@ -2,6 +2,7 @@ package com.ggquiz.presentation.controllers;
 
 import com.ggquiz.application.usecases.FindMyRankingPositionUseCase;
 import com.ggquiz.application.usecases.FindRankingUseCase;
+import com.ggquiz.application.usecases.RateLimiterPort;
 import com.ggquiz.domain.entities.User;
 import com.ggquiz.domain.repositories.UserRepository;
 import com.ggquiz.presentation.dto.response.MyPositionResponse;
@@ -23,12 +24,14 @@ public class RankingController {
     private final FindMyRankingPositionUseCase findMyRankingPositionUseCase;
     private final UserRepository userRepository;
     private final PresentationMapper mapper;
+    private final RateLimiterPort rateLimiterPort;
 
     // GET /api/ranking?period=WEEKLY&regionId=1&page=0&size=10
     @GetMapping
     public Page<RankingResponse> getRanking(@RequestParam(required = false) Integer regionId,
                                             @RequestParam(defaultValue = "ALLTIME") String period,
-                                            Pageable pageable) {
+                                            Pageable pageable,  Authentication auth) {
+        rateLimiterPort.checkLimit(auth.getName());
         return findRankingUseCase.execute(regionId, period, pageable).map(mapper::toRankingResponse);
     }
 
@@ -39,6 +42,9 @@ public class RankingController {
             @RequestParam(required = false) Integer regionId,
             @RequestParam(defaultValue = "ALLTIME") String period,
             Authentication auth) {
+
+        rateLimiterPort.checkLimit(auth.getName());
+
         User user = userRepository.findByEmail(auth.getName()).orElseThrow();
         return findMyRankingPositionUseCase.execute(user, regionId, period)
                 .map(r -> ResponseEntity.ok(new MyPositionResponse(
