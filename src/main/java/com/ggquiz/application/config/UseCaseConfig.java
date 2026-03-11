@@ -109,4 +109,9 @@ public class UseCaseConfig {
             @Value("${app.frontend-url}") String frontendUrl) {
         return new ResetPasswordUseCase(userRepository, passwordEncoder, tokenRepository, mailSender, frontendUrl);
     }
+
+    @Bean
+    public FindRankingReactiveUseCase findRankingReactiveUseCase(RankingSnapshotRepository rankingSnapshotRepository) {
+        return new FindRankingReactiveUseCase(rankingSnapshotRepository);
+    }
 }
